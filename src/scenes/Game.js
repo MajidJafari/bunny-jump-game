@@ -1,6 +1,9 @@
 import Phaser from '../lib/phaser.js'
 
 export default class Game extends Phaser.Scene {
+    /** @type {Phaser.Physics.Arcade.StaticBody} */
+    player;
+
     constructor() {
         super('game')
     }
@@ -28,7 +31,22 @@ export default class Game extends Phaser.Scene {
             body.updateFromGameObject();
         }
 
-        const player = this.physics.add.image(240, 320, "player").setScale(0.5);
-        this.physics.add.collider(platforms, player);
+        this.player = this.physics.add.image(240, 320, "player").setScale(0.5);
+        this.physics.add.collider(platforms, this.player);
+        this.player.body.checkCollision = {
+            up: false,
+            down: true,
+            left: false,
+            right: false,
+        };
+    }
+
+    update() {
+        /** @type {Phaser.Physics.Arcade.StaticBody} */
+        const body = this.player.body;
+        const touchingDown = body.touching.down;
+        if(touchingDown) {
+            this.player.setVelocityY(-300);
+        }
     }
 }
