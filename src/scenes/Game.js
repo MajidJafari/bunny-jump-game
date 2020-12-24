@@ -112,8 +112,8 @@ export default class Game extends Phaser.Scene {
         this.horizontalWrap(this.player);
 
         const bottomMost = this.findBottomMostPlatform();
-        if(this.player.y > bottomMost + 200) {
-            console.log("Game Over!");
+        if(this.player.y > bottomMost + 500) {
+            this.scene.start("game-over");
         }
     }
 
