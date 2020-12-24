@@ -19,11 +19,16 @@ export default class Game extends Phaser.Scene {
         super('game')
     }
 
+    init() {
+        this.carrotsCollected = 0;
+    }
+
     preload() {
         this.load.image("background", "assets/bg_layer1.png");
         this.load.image("platform", "assets/ground_grass.png");
         this.load.image("player", "assets/bunny1_stand.png");
         this.load.image("carrot", "assets/carrot.png");
+        this.load.image("player-jump", "assets/bunny1_jump.png");
         this.cursors = this.input.keyboard.createCursorKeys();
     }
 
@@ -93,6 +98,8 @@ export default class Game extends Phaser.Scene {
         const touchingDown = body.touching.down;
         if (touchingDown) {
             this.player.setVelocityY(-300);
+            // Switch to player-jump texture
+            this.player.setTexture("player-jump");
         }
         else {
             if (this.cursors.left.isDown) {
@@ -104,6 +111,12 @@ export default class Game extends Phaser.Scene {
             else {
                 this.player.setVelocityX(0);
             }
+        }
+        const vy = this.player.body.velocity.y;
+        // Check if player is falling
+        if(vy > 0 && this.player.texture.key !== "player") {
+            // Swith back to player texture
+            this.player.setTexture("player");
         }
 
         this.reuse(this.carrots);
