@@ -11,5 +11,11 @@ export default class GameOver extends Phaser.Scene {
             fontSize: 48
         })
         .setOrigin(0.5);
+        
+        const keyObject = this.input.keyboard.addKey("SPACE")
+        keyObject.once("down", () => {
+            keyObject.destroy();
+            this.scene.start("game");
+        })
     }
 } 
