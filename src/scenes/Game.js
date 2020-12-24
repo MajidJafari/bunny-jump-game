@@ -11,6 +11,8 @@ export default class Game extends Phaser.Scene {
     /** @type {Phaser.Physics.Arcade.Group} */
     carrots;
 
+    carrotsCollected = 0;
+
     constructor() {
         super('game')
     }
@@ -24,8 +26,43 @@ export default class Game extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(240, 320, "background").setScrollFactor(1, 0);
+        this.createNonInteractables();
+        this.createPlatforms();
+        this.createPlayer();
+        this.createCarrots();   
+    }
 
+    createNonInteractables() {
+        this.add.image(240, 320, "background").setScrollFactor(1, 0);
+        this.cameras.main.setDeadzone(this.scale.width * 1.5);
+    }
+
+    createPlayer() {
+        this.player = this.physics.add.image(240, 320, "player").setScale(0.5);
+        this.physics.add.collider(this.platforms, this.player);
+        this.player.body.checkCollision = {
+            up: false,
+            down: true,
+            left: false,
+            right: false,
+        };
+        this.cameras.main.startFollow(this.player);
+    }
+
+    createCarrots() {
+        this.carrots = this.physics.add.group({ classType: Carrot });
+        this.carrots.get(240, 320, "carrot");
+        this.physics.add.collider(this.platforms, this.carrots);
+        this.physics.add.overlap(
+            this.player,
+            this.carrots,
+            this.handleCollectCarrot,
+            undefined,
+            this
+        );
+    }
+
+    createPlatforms() {
         this.platforms = this.physics.add.staticGroup();
         for (let i = 0; i < 5; i++) {
             const x = Phaser.Math.Between(80, 400);
@@ -38,30 +75,6 @@ export default class Game extends Phaser.Scene {
             const body = platform.body;
             body.updateFromGameObject();
         }
-
-        this.player = this.physics.add.image(240, 320, "player").setScale(0.5);
-
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setDeadzone(this.scale.width * 1.5);
-
-        this.physics.add.collider(this.platforms, this.player);
-        this.player.body.checkCollision = {
-            up: false,
-            down: true,
-            left: false,
-            right: false,
-        };
-
-        this.carrots = this.physics.add.group({ classType: Carrot });
-        this.carrots.get(240, 320, "carrot");
-        this.physics.add.collider(this.platforms, this.carrots);
-        this.physics.add.overlap(
-            this.player,
-            this.carrots,
-            this.handleCollectCarrot,
-            undefined,
-            this
-        );
     }
 
     update() {
@@ -101,7 +114,7 @@ export default class Game extends Phaser.Scene {
             if (child.y > scrollY + 700) {
                 child.y = scrollY + Phaser.Math.Between(50, 100);
                 child.body.updateFromGameObject();
-                if(callOnReuse) {
+                if (callOnReuse) {
                     callOnReuse.call(context, child);
                 }
             }
@@ -153,5 +166,6 @@ export default class Game extends Phaser.Scene {
         this.carrots.killAndHide(carrot);
         // disable from physics world
         this.physics.world.disableBody(carrot.body);
+        this.carrotsCollected++;
     }
 }
