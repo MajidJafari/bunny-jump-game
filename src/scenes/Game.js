@@ -37,7 +37,23 @@ export default class Game extends Phaser.Scene {
         this.createNonInteractables();
         this.createPlatforms();
         this.createPlayer();
-        this.createCarrots();   
+        this.createCarrots();
+        this.bindKeys();   
+    }
+
+    bindKeys() {
+        this.cursors.left.on("down", () => {
+            this.player.setVelocityX(-200);
+        });
+        this.cursors.right.on("down", () => {
+            this.player.setVelocityX(200);
+        });
+        this.cursors.left.on("up", () => {
+            this.player.setVelocityX(0);
+        })
+        this.cursors.right.on("up", () => {
+            this.player.setVelocityX(0);
+        })
     }
 
     createNonInteractables() {
@@ -102,17 +118,6 @@ export default class Game extends Phaser.Scene {
             // Switch to player-jump texture
             this.player.setTexture("player-jump");
             this.sound.play("jump");
-        }
-        else {
-            if (this.cursors.left.isDown) {
-                this.player.setVelocityX(-200);
-            }
-            else if (this.cursors.right.isDown) {
-                this.player.setVelocityX(200);
-            }
-            else {
-                this.player.setVelocityX(0);
-            }
         }
         const vy = this.player.body.velocity.y;
         // Check if player is falling
