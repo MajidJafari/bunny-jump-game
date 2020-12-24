@@ -36,7 +36,10 @@ export default class Game extends Phaser.Scene {
         }
 
         this.player = this.physics.add.image(240, 320, "player").setScale(0.5);
+        
         this.cameras.main.startFollow(this.player);
+        this.cameras.main.setDeadzone(this.scale.width * 1.5);
+
         this.physics.add.collider(this.platforms, this.player);
         this.player.body.checkCollision = {
             up: false,
