@@ -12,6 +12,8 @@ export default class Game extends Phaser.Scene {
     carrots;
 
     carrotsCollected = 0;
+    /** @type {Phaser.GameObjects.Text} */
+    scoreBoard;
 
     constructor() {
         super('game')
@@ -35,6 +37,14 @@ export default class Game extends Phaser.Scene {
     createNonInteractables() {
         this.add.image(240, 320, "background").setScrollFactor(1, 0);
         this.cameras.main.setDeadzone(this.scale.width * 1.5);
+        this.createScoreBoard();
+    }
+    
+    createScoreBoard() {
+        const style = { color: "#000", fontSize: 24 };
+        this.scoreBoard = this.add.text(240, 10, "Carrots: 0", style)
+            .setScrollFactor(0)
+            .setOrigin(0.5, 0);
     }
 
     createPlayer() {
@@ -166,6 +176,8 @@ export default class Game extends Phaser.Scene {
         this.carrots.killAndHide(carrot);
         // disable from physics world
         this.physics.world.disableBody(carrot.body);
-        this.carrotsCollected++;
+        // Update Score Board
+        const text = `Carrots: ${this.carrotsCollected++}`;
+        this.scoreBoard.text = text;
     }
 }
