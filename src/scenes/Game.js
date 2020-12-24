@@ -110,6 +110,11 @@ export default class Game extends Phaser.Scene {
         this.reuse(this.platforms, this.addCarrotAbove, this);
 
         this.horizontalWrap(this.player);
+
+        const bottomMost = this.findBottomMostPlatform();
+        if(this.player.y > bottomMost + 200) {
+            console.log("Game Over!");
+        }
     }
 
     /**
@@ -179,5 +184,16 @@ export default class Game extends Phaser.Scene {
         // Update Score Board
         const text = `Carrots: ${this.carrotsCollected++}`;
         this.scoreBoard.text = text;
+    }
+
+    findBottomMostPlatform() {
+        const platforms = this.platforms.getChildren();
+        const bottomMost = platforms[0].y;
+        platforms.forEach(platform => {
+            if (platform.y > bottomMost.y) {
+                bottomMost = platform;
+            }
+        });
+        return bottomMost;
     }
 }
