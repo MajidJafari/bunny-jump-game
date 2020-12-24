@@ -36,7 +36,7 @@ export default class Game extends Phaser.Scene {
         }
 
         this.player = this.physics.add.image(240, 320, "player").setScale(0.5);
-        
+
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setDeadzone(this.scale.width * 1.5);
 
@@ -78,5 +78,24 @@ export default class Game extends Phaser.Scene {
                 platform.body.updateFromGameObject();
             }
         });
+
+        this.horizontalWrap(this.player);
+    }
+
+    /**
+        @param {Phaser.GameObjects.Sprite} sprite
+    */
+    horizontalWrap(sprite) {
+        const halfWidth = sprite.width* 0.5;
+        const gameWidth = this.scale.width;
+        const leftOfTheScenseByHalfWidth = -halfWidth;
+        const rightOfTheSceneByHalfWidth = gameWidth + halfWidth;
+
+        if(sprite.x < leftOfTheScenseByHalfWidth) {
+            sprite.x = rightOfTheSceneByHalfWidth;
+        }
+        else if (sprite.x > rightOfTheSceneByHalfWidth) {
+            sprite.x = leftOfTheScenseByHalfWidth;
+        }
     }
 }
